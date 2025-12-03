@@ -1,4 +1,10 @@
-body { margin: 0; overflow: hidden; background-color: #1a1a1a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { 
+    margin: 0; 
+    overflow: hidden; 
+    background-color: #050505; 
+    font-family: 'Orbitron', sans-serif; 
+    color: white;
+}
         
 #game-container { position: relative; width: 100vw; height: 100vh; }
 canvas { display: block; width: 100%; height: 100%; outline: none; }
@@ -8,63 +14,96 @@ canvas { display: block; width: 100%; height: 100%; outline: none; }
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    pointer-events: none; /* Laisse passer les clics vers la 3D */
+    pointer-events: none;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: 20px;
     box-sizing: border-box;
     z-index: 10;
+    background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%);
 }
 
 .hud-top {
     text-align: center;
-    color: #d4af37; /* Gold */
-    background: rgba(0, 0, 0, 0.5);
-    padding: 10px 20px;
-    border-radius: 20px;
+    background: rgba(0, 20, 40, 0.7);
+    padding: 15px 40px;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 4px; /* Angles plus carrés pour le style tech */
     align-self: center;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+    transform: skewX(-10deg); /* Petit effet incliné */
+}
+
+.hud-top h1, .hud-top div {
+    transform: skewX(10deg); /* Redresser le texte */
+}
+
+.glow-text {
+    color: #fff;
+    text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
 }
 
 .controls-area {
-    pointer-events: auto; /* Réactive les clics pour les boutons */
+    pointer-events: auto;
     display: flex;
-    gap: 15px;
+    gap: 20px;
     justify-content: center;
-    padding-bottom: 30px;
+    padding-bottom: 40px;
 }
 
 .btn {
-    background: linear-gradient(145deg, #2a2a2a, #333);
-    color: white;
-    border: 1px solid #555;
-    padding: 12px 30px;
-    font-size: 1rem;
+    background: rgba(0, 0, 0, 0.6);
+    color: #0ff;
+    border: 1px solid #0ff;
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    font-family: 'Orbitron', sans-serif;
     font-weight: bold;
-    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    letter-spacing: 2px;
+    clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%); /* Forme futuriste */
 }
 
-.btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.5); border-color: #d4af37; color: #d4af37; }
+.btn:hover {
+    background: rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    transform: translateY(-2px);
+    text-shadow: 0 0 8px #0ff;
+}
+
 .btn:active { transform: translateY(0); }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-.btn-fold { border-bottom: 3px solid #e74c3c; }
-.btn-check { border-bottom: 3px solid #f1c40f; }
-.btn-bet { border-bottom: 3px solid #2ecc71; }
+.btn-fold { 
+    color: #ff3333; 
+    border-color: #ff3333; 
+}
+.btn-fold:hover { 
+    background: rgba(255, 51, 51, 0.2); 
+    box-shadow: 0 0 15px rgba(255, 51, 51, 0.4);
+    text-shadow: 0 0 8px #f33;
+}
 
-/* Loading Overlay */
+.btn-check { 
+    color: #ffff00; 
+    border-color: #ffff00; 
+}
+.btn-check:hover { 
+    background: rgba(255, 255, 0, 0.2); 
+    box-shadow: 0 0 15px rgba(255, 255, 0, 0.4);
+    text-shadow: 0 0 8px #ff0;
+}
+
 #loader {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: #000; color: #d4af37; display: flex; 
+    background: #000; color: #0ff; display: flex; 
     justify-content: center; align-items: center; z-index: 999;
     transition: opacity 0.5s;
     font-size: 1.5rem;
-    font-weight: bold;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 4px;
+    text-shadow: 0 0 10px #0ff;
 }
