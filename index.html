@@ -3,31 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>3D Poker Starter</title>
-    <!-- Tailwind pour les utilitaires rapides -->
+    <title>Neon Poker 3D</title>
+    <!-- Police Futuriste -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body>
-    <!-- Overlay de chargement -->
-    <div id="loader">Chargement du Casino...</div>
+    <div id="loader">INITIALIZING SYSTEM...</div>
     
     <div id="game-container">
-      <!-- L'interface UI superposée -->
       <div id="ui-layer">
         <div class="hud-top">
-            <h1 class="text-xl font-bold">TEXAS HOLD'EM STARTER</h1>
-            <div id="game-status" class="text-sm opacity-80">En attente...</div>
+            <h1 class="text-2xl font-bold tracking-widest glow-text">CYBER HOLD'EM</h1>
+            <div id="game-status" class="text-sm tracking-wider mt-1 text-cyan-400">WAITING FOR INPUT...</div>
         </div>
 
         <div class="controls-area">
-            <button id="btn-fold" class="btn btn-fold">Fold</button>
-            <button id="btn-check" class="btn btn-check">Check / Call</button>
-            <button id="btn-bet" class="btn btn-bet">Bet / Deal</button>
+            <button id="btn-fold" class="btn btn-fold">FOLD</button>
+            <button id="btn-check" class="btn btn-check">CHECK</button>
+            <button id="btn-bet" class="btn btn-bet">BET / DEAL</button>
         </div>
       </div>
     </div>
 
-    <!-- Point d'entrée TypeScript -->
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
