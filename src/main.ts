@@ -6,54 +6,57 @@ import { setupControls } from './ui/Controls';
 
 // 1. Scene Setup
 const scene = new THREE.Scene();
-// Noir profond pour le contraste néon
 scene.background = new THREE.Color(0x050505); 
-scene.fog = new THREE.FogExp2(0x050505, 0.015);
+scene.fog = new THREE.FogExp2(0x050505, 0.012); // Brouillard un peu moins dense
 
 // 2. Camera
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 30, 40); // Un peu plus haut pour vue tactique
-camera.lookAt(0, 0, -2);
+// Position ajustée pour la nouvelle table plus large
+camera.position.set(0, 35, 45); 
+camera.lookAt(0, 0, 0);
 
 // 3. Renderer
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-// Tone mapping pour éviter que les couleurs saturent trop
+// PCFSoft est bien, mais VSM peut être plus smooth si bien réglé. Restons sur PCFSoft safe.
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.2;
+renderer.toneMappingExposure = 1.3;
 
 const container = document.getElementById('game-container');
 if (container) {
     container.appendChild(renderer.domElement);
 }
 
-// 4. Lumières Cyberpunk
-// Ambient sombre bleu
-const ambientLight = new THREE.AmbientLight(0x001133, 0.5);
+// 4. Lumières
+const ambientLight = new THREE.AmbientLight(0x001133, 0.6);
 scene.add(ambientLight);
 
-// Lumière principale Cyan (Gauche)
-const rectLight1 = new THREE.RectAreaLight(0x00ffff, 2, 20, 20);
-rectLight1.position.set(-15, 10, 10);
+// RectLights pour l'ambiance Cyberpunk (Plus larges pour reflets sur le cuir)
+const rectLight1 = new THREE.RectAreaLight(0x00ffff, 3, 30, 30);
+rectLight1.position.set(-20, 15, 0); // Coté gauche
 rectLight1.lookAt(0, 0, 0);
 scene.add(rectLight1);
 
-// Lumière secondaire Magenta (Droite)
-const rectLight2 = new THREE.RectAreaLight(0xff00ff, 2, 20, 20);
-rectLight2.position.set(15, 10, 10);
+const rectLight2 = new THREE.RectAreaLight(0xff00ff, 3, 30, 30);
+rectLight2.position.set(20, 15, 0); // Coté droit
 rectLight2.lookAt(0, 0, 0);
 scene.add(rectLight2);
 
-// Spot central pour bien voir les cartes
-const spotLight = new THREE.SpotLight(0xffffff, 100);
-spotLight.position.set(0, 40, 5);
-spotLight.angle = Math.PI / 6;
-spotLight.penumbra = 0.5;
+// Spot principal (Le "Dealer") - Ombres précises
+const spotLight = new THREE.SpotLight(0xffffff, 80);
+spotLight.position.set(0, 50, 10);
+spotLight.angle = Math.PI / 5;
+spotLight.penumbra = 0.3;
 spotLight.decay = 2;
 spotLight.distance = 100;
 spotLight.castShadow = true;
+// Optimisation des ombres pour éviter les artefacts sur la table
+spotLight.shadow.mapSize.width = 2048;
+spotLight.shadow.mapSize.height = 2048;
+spotLight.shadow.bias = -0.0001; 
+spotLight.shadow.normalBias = 0.02; // Important pour les objets courbes
 scene.add(spotLight);
 
 // 5. Init Game
@@ -82,14 +85,14 @@ function animate() {
     requestAnimationFrame(animate);
     const time = clock.getElapsedTime();
 
-    // Petit mouvement flottant de la table pour effet "vaisseau spatial"
-    if (table.mesh) {
-        table.mesh.position.y = -0.5 + Math.sin(time * 0.5) * 0.05;
-    }
+    // Animation subtile des lumières néon (pulsation)
+    const pulse = 2 + Math.sin(time * 2) * 1;
+    rectLight1.intensity = pulse;
+    rectLight2.intensity = 3 + Math.cos(time * 1.5) * 1;
 
     renderer.render(scene, camera);
 }
 
 animate();
 
-console.log("Neon System Online.");
+console.log("Realistic Neon System Online.");
