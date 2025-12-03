@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import { createCardTexture, createCardBackTexture } from '../utils/AssetGenerator';
 
-// Singleton pour éviter de recréer la texture dos 52 fois
 const sharedBackTexture = createCardBackTexture();
 
 export class Card {
@@ -15,75 +14,85 @@ export class Card {
         this.rank = rank;
         this.suit = suit;
 
-        // Géométrie de la carte (taille standard poker ratio 2.5 x 3.5)
         const geometry = new THREE.PlaneGeometry(2.5, 3.5);
 
-        // Matériaux
+        // Matériau physique pour mieux réagir aux lumières colorées
         const frontMat = new THREE.MeshStandardMaterial({ 
             map: createCardTexture(rank, suit),
-            roughness: 0.4,
-            metalness: 0.0
+            roughness: 0.3,
+            metalness: 0.1,
+            emissive: 0x222222, // Légère auto-luminescence pour le noir
+            emissiveIntensity: 0.2
         });
         
         const backMat = new THREE.MeshStandardMaterial({ 
             map: sharedBackTexture,
             roughness: 0.4,
-            metalness: 0.1
+            metalness: 0.6
         });
 
-        // Création des faces (Recto / Verso)
         const frontMesh = new THREE.Mesh(geometry, frontMat);
-        frontMesh.rotation.y = Math.PI; // Face vers l'arrière initialement
-        frontMesh.receiveShadow = true;
-        frontMesh.castShadow = true;
-        // Petite épaisseur visuelle pour éviter le z-fighting
+        frontMesh.rotation.y = Math.PI;
         frontMesh.position.z = -0.01; 
+        frontMesh.castShadow = true;
 
         const backMesh = new THREE.Mesh(geometry, backMat);
-        backMesh.receiveShadow = true;
         backMesh.castShadow = true;
 
-        // Group pour manipuler la carte entière
         this.mesh = new THREE.Group();
         this.mesh.add(frontMesh);
         this.mesh.add(backMesh);
     }
 
-    // Animation de déplacement vers une position
-    moveTo(x: number, y: number, z: number, delay: number = 0, duration: number = 0.6) {
+    // Déplacement fluide avec "power2.inOut" pour moins de rigidité
+    moveTo(x: number, y: number, z: number, delay: number = 0, duration: number = 0.8) {
         return gsap.to(this.mesh.position, {
             x: x, y: y, z: z,
             duration: duration,
             delay: delay,
-            ease: "power2.out"
+            ease: "power2.inOut"
         });
     }
 
-    // Animation de rotation
-    rotateTo(x: number, y: number, z: number, delay: number = 0, duration: number = 0.6) {
+    // Rotation
+    rotateTo(x: number, y: number, z: number, delay: number = 0, duration: number = 0.8) {
         return gsap.to(this.mesh.rotation, {
             x: x, y: y, z: z,
             duration: duration,
             delay: delay,
-            ease: "power2.out"
+            ease: "power2.inOut"
         });
     }
 
-    // Retourner la carte
+    // Flip amélioré : on lève la carte plus haut pour éviter qu'elle traverse la table
     flip(delay: number = 0) {
         this.isFaceUp = !this.isFaceUp;
         
-        // Petit saut en Z pour le réalisme
-        gsap.to(this.mesh.position, { y: this.mesh.position.y + 1, duration: 0.2, yoyo: true, repeat: 1, delay: delay });
-        
-        // La rotation du groupe entier
-        return gsap.to(this.mesh.rotation, {
-            x: -Math.PI / 2, // A plat sur la table
-            y: Math.PI,      // Retournée
-            z: Math.random() * 0.2 - 0.1, // Légère variation aléatoire
-            duration: 0.5,
-            delay: delay,
+        const tl = gsap.timeline({ delay: delay });
+
+        // 1. Monter
+        tl.to(this.mesh.position, { 
+            y: this.mesh.position.y + 2.5, 
+            duration: 0.3, 
+            ease: "power1.out" 
+        }, 0);
+
+        // 2. Tourner (pendant la montée/descente)
+        tl.to(this.mesh.rotation, {
+            x: -Math.PI / 2, // A plat
+            y: Math.PI,      // Tourné
+            z: (Math.random() * 0.1) - 0.05, // Imperfection naturelle
+            duration: 0.6,
             ease: "back.out(1.2)"
-        });
+        }, 0);
+
+        // 3. Redescendre
+        tl.to(this.mesh.position, { 
+            y: 0.1, // Hauteur finale sur la table (fixe pour éviter les erreurs d'arrondi)
+            duration: 0.4, 
+            ease: "bounce.out" 
+        }, 0.3);
+
+        return tl;
     }
 }
