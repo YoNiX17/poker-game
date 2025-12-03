@@ -1,1 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Poker Starter</title>
+    <!-- Tailwind pour les utilitaires rapides -->
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <!-- Overlay de chargement -->
+    <div id="loader">Chargement du Casino...</div>
+    
+    <div id="game-container">
+      <!-- L'interface UI superposée -->
+      <div id="ui-layer">
+        <div class="hud-top">
+            <h1 class="text-xl font-bold">TEXAS HOLD'EM STARTER</h1>
+            <div id="game-status" class="text-sm opacity-80">En attente...</div>
+        </div>
 
+        <div class="controls-area">
+            <button id="btn-fold" class="btn btn-fold">Fold</button>
+            <button id="btn-check" class="btn btn-check">Check / Call</button>
+            <button id="btn-bet" class="btn btn-bet">Bet / Deal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Point d'entrée TypeScript -->
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
